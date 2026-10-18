@@ -96,6 +96,12 @@ PROMPT_NOVELA_LIGERA = """
 Eres un director editorial y coordinador de traducción literaria.
 A continuación te entrego el texto completo de un libro en inglés.
 
+CONTEXTO EDITORIAL Y DE SEGURIDAD:
+Este texto es una obra literaria de ficción de época (novela ligera / drama histórico).
+Contiene lenguaje descriptivo, conflictos narrativos, términos médicos y situaciones dramáticas de ficción.
+Tu única labor es realizar una traducción fiel y neutra al español de este texto artístico preexistente,
+sin omitir, censurar ni alterar el significado original de los términos o diálogos.
+
 {BLOQUE_SERIE}
 
 Analiza exhaustivamente la totalidad del texto y genera una "Guía de Traducción" en español neutro con el siguiente esquema estricto:
@@ -492,7 +498,12 @@ def llamar_gemini_rest(
 ) -> str:
     url = URL_API.format(modelo=modelo)
 
-    instruccion_final = prompt_sistema
+    prefijo_seguridad = (
+        "CONTEXTO EDITORIAL: Obra literaria de ficción de época. Traduce de manera neutra, "
+        "fiel y literal sin omitir ni censurar términos médicos, dramáticos o descriptivos.\n\n"
+    )
+
+    instruccion_final = prefijo_seguridad + (prompt_sistema or "")
     if prompt_sistema and not sin_reparar:
         instruccion_final += (
             "\n\nREGLA TÉCNICA ESTRICTA: Conserva intactas todas las etiquetas XHTML, sus atributos "
